@@ -69,7 +69,28 @@ module ConstantContact
         @connection = nil
         @oauth_access_token_secret = oauth_access_token_secret
       end
+
+      def oauth2_access_token
+        if defined?(@oauth2_access_token)
+          @oauth2_access_token
+        elsif superclass != Object && superclass.oauth2_access_token
+          superclass.oauth2_access_token.dup.freeze
+        end
+      end
       
+      def oauth2_access_token=(oauth2_access_token)
+        @connection = nil
+        @oauth2_access_token = oauth2_access_token
+      end
+
+      # Adding the Bearer token seems to be the easiest way to add the
+      # OAuth2 access_token to the request - see end of:
+      # http://community.constantcontact.com/t5/Documentation/Authentication-using-OAuth-2-0-Server-and-Client-Flows/ba-p/38313
+      # Better solution might be to subclass or monkey-patch ActiveResource::Connection
+      def headers
+        oauth2_access_token ? {'Authorization' => "Bearer #{oauth2_access_token}"} : {}
+      end
+
       def connection(refresh = false)
         if defined?(@connection) || superclass == Object
           if defined?(@oauth_consumer_secret) 
@@ -83,6 +104,9 @@ module ConstantContact
               :oauth_token => oauth_access_token_key,
               :oauth_token_secret => oauth_access_token_secret),
             site, format) if refresh || @connection.nil?
+          elsif defined?(@oauth2_access_token)
+            @connection = ActiveResource::Connection.new(site, format) if refresh || @connection.nil?
+            @connection.timeout = timeout if timeout
           else
             @connection = ActiveResource::Connection.new(site, format) if refresh || @connection.nil?
             @connection.password = password if password
