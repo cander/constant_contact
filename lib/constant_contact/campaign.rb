@@ -20,6 +20,10 @@ module ConstantContact
     # CC requires so many extraneous fields to be present
     # when creating a new Campaign.
     def initialize(*args)
+      # NB: you would expect that args could contain attributes that are
+      # set in set_defaults below (e.g., from_name), but that doesn't work
+      # because set_defaults is looking for Camelized attributes (e.g.  FromName).
+      # TODO: Construct a new attribute hash with Camilzed names to pass to super
       obj = super
       obj.set_defaults
       obj
@@ -42,8 +46,17 @@ module ConstantContact
       end        
     end
     
+    # TODO: should invalidate @from_email_url when from_email is set
+    def from_email_url=(url)
+        @from_email_url = url
+    end
+
     def from_email_url
-      EmailAddress.find(self.from_email).id
+      unless @from_email_url
+        @from_email_url = EmailAddress.find(self.from_email).id
+      end
+
+      @from_email_url
     end
 
     def reply_to_email_url
