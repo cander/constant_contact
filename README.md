@@ -17,8 +17,8 @@ All examples require setting up either the specific class you'll be use or the B
 
 ### Basic Auth
 
-    ConstantContact::Base.user = 'user'
     ConstantContact::Base.api_key = 'api-key'
+    ConstantContact::Base.user = 'user'
     ConstantContact::Base.password = 'password'
 
 
@@ -28,14 +28,15 @@ All examples require setting up either the specific class you'll be use or the B
 [wishery fork](https://github.com/wishery/constant_contact), but this is
 how I think it would work.*
 
-    ConstantContact::Base.user = 'user'
     ConstantContact::Base.api_key = 'api-key'
+    ConstantContact::Base.user = 'user'
     ConstantContact::Base.oauth_consumer_secret = 'secret'
     ConstantContact::Base.oauth_access_token_key = 'token'
     ConstantContact::Base.oauth_access_token_secret = 'secret'
 
 ### OAuth2
 
+    ConstantContact::Base.api_key = 'api-key'
     ConstantContact::Base.user = 'user'
     ConstantContact::Base.oauth2_access_token = 'access-token'
 
@@ -77,6 +78,18 @@ Examples
     c = ConstantContact::Contact.find_by_email('jon@example.com')
     @contact = ConstantContact::Contact.find(c.int_id) # Because Constant Contact doesn't return a full contact when searching by email
     puts 'In default contact list.' if @contact.contact_lists.include?(1) # contact_lists is an array of list ids
+
+Development and Testing
+-----------------------
+
+I created a Gemfile (independent of the gemspec) that works for me - your
+milage may vary.  To install the gems:
+
+    bundle install --path vender/bundle
+
+To run the tests:
+
+    bundle exec rake
 
 Debugging
 ---------
