@@ -3,3 +3,5 @@
 dist
 rdoc
 .idea
+.bundle
+vendor
