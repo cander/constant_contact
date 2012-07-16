@@ -88,7 +88,7 @@ module ConstantContact
       # http://community.constantcontact.com/t5/Documentation/Authentication-using-OAuth-2-0-Server-and-Client-Flows/ba-p/38313
       # Better solution might be to subclass or monkey-patch ActiveResource::Connection
       def headers
-        oauth2_access_token ? {'Authorization' => "Bearer #{oauth2_access_token}"} : {}
+        defined?(@oauth2_access_token) ? {'Authorization' => "Bearer #{oauth2_access_token}"} : {}
       end
 
       def connection(refresh = false)
