@@ -60,9 +60,22 @@ module ConstantContact
     end
 
     def reply_to_email_url
-      from_email_url
+      unless @reply_to_email_url
+        if attributes.has_key?('ReplyToEmail')
+          @reply_to_email_url = EmailAddress.find(self.reply_to_email).id
+        else
+          @reply_to_email_url = from_email_url
+        end
+      end
+
+      @reply_to_email_url
     end
-    
+
+    # TODO: should invalidate @reply_to_email_url when reply_to_email is set
+    def reply_to_email_url=(url)
+        @reply_to_email_url = url
+    end
+
     
     protected
     def set_defaults
