@@ -88,7 +88,17 @@ module ConstantContact
       # http://community.constantcontact.com/t5/Documentation/Authentication-using-OAuth-2-0-Server-and-Client-Flows/ba-p/38313
       # Better solution might be to subclass or monkey-patch ActiveResource::Connection
       def headers
-        defined?(@oauth2_access_token) ? {'Authorization' => "Bearer #{oauth2_access_token}"} : {}
+        result = super
+        if @oauth2_access_token != nil
+           result['Authorization'] = "Bearer #{oauth2_access_token}"
+            # this is kinda lame - despite the fact that RFC 2616 says
+            # that HTTP headers are case-insensitive, Constant Contact
+            # needs the type to be spelled "type" not "Type", at least
+            # when saving a campaign schedule.
+            result['Content-type'] = 'application/atom+xml'
+        end
+
+        result
       end
 
       def connection(refresh = false)
