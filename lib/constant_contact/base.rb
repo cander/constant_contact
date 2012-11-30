@@ -137,6 +137,8 @@ module ConstantContact
       # where a single element is returned. This enables calling
       # <tt>find(:first, {:params => {:email => 'sample@example.com'}})
       def find_every(options)
+        # FYI: AtomFormat.decode handles the pagination from CC by
+        # recursively calling get and decode - see formats/atom_format.rb
         case from = options[:from]
         when Symbol
           instantiate_collection(get(from, options[:params]))
